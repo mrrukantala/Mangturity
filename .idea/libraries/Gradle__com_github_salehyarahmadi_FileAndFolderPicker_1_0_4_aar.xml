@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.salehyarahmadi:FileAndFolderPicker:1.0.4@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/a3d56fd8bced580697b875c4439b5d7e/transformed/jetified-FileAndFolderPicker-1.0.4/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/a3d56fd8bced580697b875c4439b5d7e/transformed/jetified-FileAndFolderPicker-1.0.4/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/a3d56fd8bced580697b875c4439b5d7e/transformed/jetified-FileAndFolderPicker-1.0.4/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.salehyarahmadi/FileAndFolderPicker/1.0.4/651c669989160a4b73e0c9022c985fe8e9f1c547/FileAndFolderPicker-1.0.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
