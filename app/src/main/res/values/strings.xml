@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">mango_knn</string>
+    <string name="app_name">Mangturity</string>
+    <string name="bantuan">Halaman Tentang berisi profil singkat mengenai peniliti aplikasi ini \n\n Halaman Informasi berisi berbagai informasi mengenai buah mangga khususnya jenis harumanis \n\n\n Halaman Identifikasi berisi sebuah sistem yang dapat mengidentifikasi gambar buah mangga : dengan memasukan sebuah gambar mangga, sistem akan mendeteksi apakah buah mangga tersebut mentah, matang, atau sangat matang.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="informasi">Mangga Harumanis memiliki keunggulan karena cita rasanya yang khas dengan tekstur lembut, creamy, dengan sedikit serat. Indonesia adalah salah satu negara dengan keragaman varietas buah mangga tertinggi. Salah satu varietas buah mangga yang memiliki potensi ekspor tinggi adalah mangga Harumanis karena varietas mangga ini tidak dihasilkan oleh negara penghasil dan pengekspor mangga dunia, seperti India, Meksiko, dan negara Amerika latin lainnya. Para ahli meyakini mangga adalah sumber karotenoid yang disebut beta crytoxanthin, yaitu bahan penumpas kanker yang baik. Mangga kaya akan vitamin, antioksidan seperti vitamin C dan E. Satu buah mangga mengandung tujuh gram serat yang dapat membantu sistem pencernaan.</string>
+    <string name="ilmiah">Kingdom : Plantae\n Class : Mangoliopsida\n Phylum : Mangoliophyta\n Ordo : Sapindales\n Famili : Anacardiaceae\n Genus : Mangifera\n Spesies : Mangifera indica L. var. harumanis\n</string>
 </resources>
