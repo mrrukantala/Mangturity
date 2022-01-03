@@ -62,9 +62,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // test code for extract all features
-        Toast.makeText(this, "Run", Toast.LENGTH_SHORT).show();
-        testWithAllData();
-        extractGLCMforAll();
+//        testWithAllData();
+//        extractGLCMforAll();
     }
 
     private boolean permissionGranted(){

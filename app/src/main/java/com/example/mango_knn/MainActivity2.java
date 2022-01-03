@@ -1,72 +1,52 @@
 package com.example.mango_knn;
 
+
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.icu.util.Output;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.github.dhaval2404.imagepicker.ImagePicker;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import ir.androidexception.filepicker.dialog.SingleFilePickerDialog;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    private final int FEAT_CNT = 16;
-    private double[] scaler_data_min = {300.0, 300.0, 300.0, 300.0,
-            5.0, 5.0, 5.0, 5.0,
-            0.0, 0.0, 0.0, 0.0,
-            0.3, 0.3, 0.3, 0.3};
-    private double[] scaler_data_max = {1600.0, 1600.0, 1600.0, 1600.0,
-            20.0, 20.0, 20.0, 20.0,
-            0.6, 0.6, 0.6, 0.6,
-            0.8, 0.8, 0.8, 0.8};
+    private final int FEAT_CNT = 4;
+    private double[] scaler_data_min = {300.0, 5.0, 0.0, 0.3};
+    private double[] scaler_data_max = {1600.0, 20.0, 0.6, 0.8};
 
     private TextView edtPath;
     private Button btnBrowse;
     private Button btnPredict;
     private TextView edtResult;
     private ImageView imgResult;
-    private TextView edtResultBold;
 
     String[] class_name = {"matang", "mentah", "sangat_matang"};
 
+    private final String DATA_FILE_NAME = "data.csv";
     private final String RESULT_FILE_NAME = "result.csv";
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode == Activity.RESULT_OK) {
-            edtPath.setText(data.getData().getPath());
-        } else if (resultCode == ImagePicker.RESULT_ERROR) {
-            Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // initialize controls
         edtPath = this.findViewById(R.id.edtPath);
@@ -74,7 +54,6 @@ public class MainActivity2 extends AppCompatActivity {
         btnPredict = this.findViewById(R.id.btnPredict);
         edtResult = this.findViewById(R.id.edtResult);
         imgResult = this.findViewById(R.id.imgResult);
-        edtResultBold = this.findViewById(R.id.edtResultBold);
 
         // add button listener
         btnBrowse.setOnClickListener(v -> {
@@ -85,38 +64,37 @@ public class MainActivity2 extends AppCompatActivity {
                     .start();
         });
 
-
         btnPredict.setOnClickListener(v -> {
             onClickPredict();
         });
+
+        // test code for extract all features
+//        testWithAllData();
+//        extractGLCMforAll();
     }
 
-    /**
-     private boolean permissionGranted() {
-     return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-     && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-     }
+    private boolean permissionGranted(){
+        return ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+    }
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+    }
 
-     private void requestPermission() {
-     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-     }
+    private void onClickBrowse() {
+        if(permissionGranted()) {
+            SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
+                    () -> Toast.makeText(MainActivity2.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
+                    files -> {
+                        edtPath.setText(files[0].getPath());
+                    });
+            singleFilePickerDialog.show();
+        }
+        else{
+            requestPermission();
+        }
+    }
 
-
-     private void onClickBrowse() {
-     if (permissionGranted()) {
-     SingleFilePickerDialog singleFilePickerDialog = new SingleFilePickerDialog(this,
-     () -> Toast.makeText(MainActivity2.this, "Canceled!!", Toast.LENGTH_SHORT).show(),
-     files -> {
-     edtPath.setText(files[0].getPath());
-     });
-     singleFilePickerDialog.show();
-     } else {
-     requestPermission();
-     }
-     }
-     **/
-
-    @SuppressLint({"DefaultLocale", "SetTextI18n"})
     private void onClickPredict() {
         // Features:
         double[] features = new double[FEAT_CNT];
@@ -130,29 +108,11 @@ public class MainActivity2 extends AppCompatActivity {
             glcmfe.extract(5);
             imgResult.setImageBitmap(glcmfe.getBitmap());
 
-            // contrast
-            features[0] = glcmfe.getContrast()[0];
-            features[1] = glcmfe.getContrast()[1];
-            features[2] = glcmfe.getContrast()[2];
-            features[3] = glcmfe.getContrast()[3];
-
-            // dissmilarity
-            features[4] = glcmfe.getDissimilarity()[0];
-            features[5] = glcmfe.getDissimilarity()[1];
-            features[6] = glcmfe.getDissimilarity()[2];
-            features[7] = glcmfe.getDissimilarity()[3];
-
-            // energy
-            features[8] = glcmfe.getEnergy()[0];
-            features[9] = glcmfe.getEnergy()[1];
-            features[10] = glcmfe.getEnergy()[2];
-            features[11] = glcmfe.getEnergy()[3];
-
-            // homogeneity
-            features[12] = glcmfe.getHomogenity()[0];
-            features[13] = glcmfe.getHomogenity()[1];
-            features[14] = glcmfe.getHomogenity()[2];
-            features[15] = glcmfe.getHomogenity()[3];
+            // get features
+            features[0] = glcmfe.getContrast();
+            features[1] = glcmfe.getDissimilarity();
+            features[2] = glcmfe.getEnergy();
+            features[3] = glcmfe.getHomogenity();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -169,14 +129,11 @@ public class MainActivity2 extends AppCompatActivity {
         int prediction = clf.predict(features);
         System.out.println(prediction);
         double[] prob_result = clf.getProb();
-        edtResult.setText(String.format("File: %s\n\n%s: %2.0f%%\n%s: %2.0f%%\n%s: %2.0f%%",
-                edtPath.getText().toString(),
-                class_name[0], prob_result[0] * 100,
-                class_name[1], prob_result[1] * 100,
-                class_name[2], prob_result[2] * 100));
-
-        edtResultBold.setText(String.format("Result = %s",
-                class_name[prediction]));
+        edtResult.setText(String.format("File: %s\nResult = %s\n\n\n%s: %.2f\n%s: %.2f\n%s: %.2f",
+                edtPath.getText().toString(), class_name[prediction],
+                class_name[0], prob_result[0],
+                class_name[1], prob_result[1],
+                class_name[2], prob_result[2]));
 
 //        // feature:0
 //        double[] features0 = {0.588804, 0.539979, 0.25955, 0.582839, 0.447251, 0.421144, 0.263315, 0.444884, 0.471023, 0.465584, 0.492461, 0.46241, 0.382667, 0.376604, 0.415602, 0.376871};
@@ -233,29 +190,11 @@ public class MainActivity2 extends AppCompatActivity {
                     GLCMFeatureExtraction glcmfe = new GLCMFeatureExtraction(szPath, 256);
                     glcmfe.extract(5);
 
-                    // contrast
-                    features[0] = glcmfe.getContrast()[0];
-                    features[1] = glcmfe.getContrast()[1];
-                    features[2] = glcmfe.getContrast()[2];
-                    features[3] = glcmfe.getContrast()[3];
-
-                    // dissmilarity
-                    features[4] = glcmfe.getDissimilarity()[0];
-                    features[5] = glcmfe.getDissimilarity()[1];
-                    features[6] = glcmfe.getDissimilarity()[2];
-                    features[7] = glcmfe.getDissimilarity()[3];
-
-                    // energy
-                    features[8] = glcmfe.getEnergy()[0];
-                    features[9] = glcmfe.getEnergy()[1];
-                    features[10] = glcmfe.getEnergy()[2];
-                    features[11] = glcmfe.getEnergy()[3];
-
-                    // homogeneity
-                    features[12] = glcmfe.getHomogenity()[0];
-                    features[13] = glcmfe.getHomogenity()[1];
-                    features[14] = glcmfe.getHomogenity()[2];
-                    features[15] = glcmfe.getHomogenity()[3];
+                    // get features
+                    features[0] = glcmfe.getContrast();
+                    features[1] = glcmfe.getDissimilarity();
+                    features[2] = glcmfe.getEnergy();
+                    features[3] = glcmfe.getHomogenity();
 
                     // scale features
                     for (int i = 0; i < FEAT_CNT; i++) {
@@ -282,5 +221,53 @@ public class MainActivity2 extends AppCompatActivity {
                 }
             }
         }
+
+        Toast.makeText(this, "Test With ALl Data Succes", Toast.LENGTH_SHORT).show();
+    }
+
+    void extractGLCMforAll() {
+        // Features:
+        double[] features = new double[FEAT_CNT];
+        String[] class_name = {"matang", "mentah", "sangat_matang"};
+
+        // write column headers
+        writefile("contrast,dissimilarity,energy,homogeneity,Maturity_level", DATA_FILE_NAME);
+
+        int id = 0;
+        for (int idx = 0; idx < 3; idx++) {
+            for (int num = 1; num <= 40; num++) {
+                try {
+                    // make path name
+                    String szPath = "/storage/emulated/0/mangga/" + class_name[idx] + "/" + String.format("%03d.JPG", num);
+                    System.out.println(szPath);
+
+                    // extract image & get feature
+                    GLCMFeatureExtraction glcmfe = new GLCMFeatureExtraction(szPath, 256);
+                    glcmfe.extract(5);
+
+                    // get features
+                    features[0] = glcmfe.getContrast();
+                    features[1] = glcmfe.getDissimilarity();
+                    features[2] = glcmfe.getEnergy();
+                    features[3] = glcmfe.getHomogenity();
+
+                    String writeData = "";
+
+                    // scale features
+                    for (int i = 0; i < FEAT_CNT; i++) {
+                        features[i] = (features[i] - scaler_data_min[i]) / (scaler_data_max[i] - scaler_data_min[i]);
+                        writeData += String.format("%f,", features[i]);
+                    }
+                    writeData += String.format("%s", class_name[idx]);
+                    writefile(writeData, DATA_FILE_NAME);
+
+                    id++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Toast.makeText(this, "Extract GLCM Succes", Toast.LENGTH_SHORT).show();
     }
 }

@@ -2,8 +2,10 @@ package com.example.mango_knn;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 
 public class SplashActivity extends AppCompatActivity {
 
