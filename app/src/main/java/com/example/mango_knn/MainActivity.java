@@ -6,11 +6,8 @@ import static com.example.mango_knn.Utilites.scaler_data_max;
 import static com.example.mango_knn.Utilites.scaler_data_min;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
-import android.icu.util.Output;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -20,13 +17,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+
+import com.example.mango_knn.Utilites.*;
 
 import ir.androidexception.filepicker.dialog.SingleFilePickerDialog;
 
@@ -46,8 +39,10 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-//        testWithAllData();
-//        extractGLCMforAll();
+        Utilites utilites = new Utilites();
+
+        utilites.testWithAllData();
+        utilites.extractGLCMforAll();
 
         // initialize controls
         edtPath = this.findViewById(R.id.edtPath);

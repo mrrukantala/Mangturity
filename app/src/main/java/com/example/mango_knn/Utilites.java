@@ -37,7 +37,7 @@ public class Utilites {
         }
     }
 
-    void testWithAllData() {
+    public void testWithAllData() {
         // Features:
         double[] features = new double[FEAT_CNT];
 
@@ -93,7 +93,7 @@ public class Utilites {
     }
 
     @SuppressLint("DefaultLocale")
-    void extractGLCMforAll() {
+    public void extractGLCMforAll() {
         // Features:
         float[] features = new float[FEAT_CNT];
         String[] class_name = {"matang", "mentah", "sangat_matang"};
