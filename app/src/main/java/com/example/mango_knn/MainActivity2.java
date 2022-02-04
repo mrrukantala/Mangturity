@@ -20,9 +20,9 @@ import java.util.Objects;
 
 public class MainActivity2 extends AppCompatActivity {
 
-    private final int FEAT_CNT = 4;
-    private final double[] scaler_data_min = {300.0, 5.0, 0.0, 0.3};
-    private final double[] scaler_data_max = {1600.0, 20.0, 0.6, 0.8};
+    private final int FEAT_CNT = 5;
+    public static final double[] scaler_data_min = {300.0, 5.0, 0.0, 0.3, 0.0};
+    public static final double[] scaler_data_max = {1600.0, 20.0, 0.6, 0.8, 0.6};
 
     private TextView edtPath;
     private Button btnBrowse;
@@ -74,6 +74,7 @@ public class MainActivity2 extends AppCompatActivity {
             onClickPredict();
         });
     }
+
     @SuppressLint("DefaultLocale")
     private void onClickPredict() {
         // Features:
@@ -90,9 +91,11 @@ public class MainActivity2 extends AppCompatActivity {
 
             // get features
             features[0] = glcmfe.getContrast();
-            features[1] = glcmfe.getDissimilarity();
+            features[1] = glcmfe.getCorrelation();
             features[2] = glcmfe.getEnergy();
             features[3] = glcmfe.getHomogenity();
+            features[4] = glcmfe.getEntropy();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -109,7 +112,7 @@ public class MainActivity2 extends AppCompatActivity {
         int prediction = clf.predict(features);
         System.out.println(prediction);
         double[] prob_result = clf.getProb();
-        edtResult.setText(String.format("File: %s\n\n%s: %2.0f%%\n%s: %2.0f%%\n%s: %2.0f%%",
+        edtResult.setText(String.format("File: %s\n\n%s: %2.0f%%\n%s: %2.0f%%\n%s: %2.0f%%\n",
                 edtPath.getText().toString(),
                 class_name[0], prob_result[0] * 100,
                 class_name[1], prob_result[1] * 100,

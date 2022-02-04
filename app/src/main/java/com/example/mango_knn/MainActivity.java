@@ -6,6 +6,7 @@ import static com.example.mango_knn.Utilites.scaler_data_max;
 import static com.example.mango_knn.Utilites.scaler_data_min;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Button;
@@ -41,8 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
         Utilites utilites = new Utilites();
 
-        utilites.testWithAllData();
-        utilites.extractGLCMforAll();
+//        utilites.extractGLCMforAll();
+//        utilites.testWithAllData();
 
         // initialize controls
         edtPath = this.findViewById(R.id.edtPath);
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private void onClickPredict() {
         // Features:
         double[] features = new double[Utilites.FEAT_CNT];
@@ -94,14 +96,16 @@ public class MainActivity extends AppCompatActivity {
         // load image
         try {
             GLCMFeatureExtraction glcmfe = new GLCMFeatureExtraction(edtPath.getText().toString(), 256);
-            glcmfe.extract(5);
+            glcmfe.extract(7);
             imgResult.setImageBitmap(glcmfe.getBitmap());
 
             // get features
             features[0] = glcmfe.getContrast();
-            features[1] = glcmfe.getDissimilarity();
+            features[1] = glcmfe.getCorrelation();
             features[2] = glcmfe.getEnergy();
             features[3] = glcmfe.getHomogenity();
+            features[4] = glcmfe.getEntropy();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,6 +131,4 @@ public class MainActivity extends AppCompatActivity {
         edtResultBold.setText(String.format("Result = %s",
                 class_name[prediction]));
     }
-
-
 }

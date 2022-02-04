@@ -1,7 +1,6 @@
 package com.example.mango_knn;
 
 import android.annotation.SuppressLint;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -10,15 +9,15 @@ import java.io.OutputStreamWriter;
 
 public class Utilites {
 
-    public static final int FEAT_CNT = 4;
+    public static final int FEAT_CNT = 5;
 
     public static final String[] class_name = {"matang", "mentah", "sangat_matang"};
 
     private final String DATA_FILE_NAME = "data.csv";
     private final String RESULT_FILE_NAME = "result.csv";
 
-    public static final double[] scaler_data_min = {300.0, 5.0, 0.0, 0.3};
-    public static final double[] scaler_data_max = {1600.0, 20.0, 0.6, 0.8};
+    public static final double[] scaler_data_min = {300.0, 5.0, 0.0, 0.3, 0.0};
+    public static final double[] scaler_data_max = {1600.0, 20.0, 0.6, 0.8, 0.6};
 
     public void writefile(String text, String filename) {
         File myFile = new File("/storage/emulated/0/" + filename);
@@ -48,10 +47,10 @@ public class Utilites {
         writefile("Class,FileName,Predicted,Result,Prob_matang,Prob_mentah,Prob_sangat_matang", RESULT_FILE_NAME);
 
         for (int idx = 0; idx < 3; idx++) {
-            for (int num = 1; num <= 40; num++) {
+            for (int num = 1; num <= 50; num++) {
                 try {
                     // make path name
-                    String szPath = "/storage/emulated/0/mangga/" + class_name[idx] + "/" + String.format("%03d.JPG", num);
+                    String szPath = "/storage/emulated/0/mangga/" + class_name[idx] + "/" + String.format("%03d.PNG", num);
                     System.out.println(szPath);
 
                     // extract image & get feature
@@ -60,9 +59,10 @@ public class Utilites {
 
                     // get features
                     features[0] = glcmfe.getContrast();
-                    features[1] = glcmfe.getDissimilarity();
+                    features[1] = glcmfe.getCorrelation();
                     features[2] = glcmfe.getEnergy();
                     features[3] = glcmfe.getHomogenity();
+                    features[4] = glcmfe.getEntropy();
 
                     // scale features
                     for (int i = 0; i < FEAT_CNT; i++) {
@@ -74,7 +74,7 @@ public class Utilites {
 
                     // write result to file
                     String resultData = class_name[idx] + ",";
-                    resultData += String.format("%03d.JPG", num) + ",";
+                    resultData += String.format("%03d.PNG", num) + ",";
                     resultData += class_name[prediction] + ",";
                     if (idx == prediction)
                         resultData += "OK,";
@@ -99,14 +99,14 @@ public class Utilites {
         String[] class_name = {"matang", "mentah", "sangat_matang"};
 
         // write column headers
-        writefile("contrast,dissimilarity,energy,homogeneity,Maturity_level", DATA_FILE_NAME);
+        writefile("contrast,correlation,energy,homogeneity,entropy,Maturity_level", DATA_FILE_NAME);
 
         int id = 0;
         for (int idx = 0; idx < 3; idx++) {
-            for (int num = 1; num <= 40; num++) {
+            for (int num = 1; num <= 50; num++) {
                 try {
                     // make path name
-                    String szPath = "/storage/emulated/0/mangga/" + class_name[idx] + "/" + String.format("%03d.JPG", num);
+                    String szPath = "/storage/emulated/0/mangga/" + class_name[idx] + "/" + String.format("%03d.PNG", num);
                     System.out.println(szPath);
 
                     // extract image & get feature
@@ -115,9 +115,10 @@ public class Utilites {
 
                     // get features
                     features[0] = (float) glcmfe.getContrast();
-                    features[1] = (float) glcmfe.getDissimilarity();
+                    features[1] = (float) glcmfe.getCorrelation();
                     features[2] = (float) glcmfe.getEnergy();
                     features[3] = (float) glcmfe.getHomogenity();
+                    features[4] = (float) glcmfe.getEntropy();
 
                     StringBuilder writeData = new StringBuilder();
 
